@@ -1,0 +1,19 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-service
+  profiles:
+    active: native # Tells Config Server to look at local files, not Git
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/shared-config/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
