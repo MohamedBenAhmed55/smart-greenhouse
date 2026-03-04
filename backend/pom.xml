@@ -12,7 +12,7 @@
     <modules>
         <module>common-lib</module>
         <module>config-service</module>
-        <!--        <module>discovery-service</module>-->
+        <module>discovery-service</module>
         <!--        <module>gateway-service</module>-->
         <!--        <module>environment-service</module>-->
         <!--        <module>control-service</module>-->
