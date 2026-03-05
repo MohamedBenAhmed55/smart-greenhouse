@@ -1,11 +1,14 @@
 package com.polytech.greenhouse.service.impl;
 
+import com.polytech.greenhouse.config.RabbitMQConfig;
 import com.polytech.greenhouse.entity.Measurement;
 import com.polytech.greenhouse.entity.Parameter;
 import com.polytech.greenhouse.repository.MeasurementRepository;
 import com.polytech.greenhouse.repository.ParameterRepository;
 import com.polytech.greenhouse.service.MeasurementService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,29 +17,50 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MeasurementServiceImpl implements MeasurementService {
 
     private final MeasurementRepository measurementRepository;
     private final ParameterRepository parameterRepository;
+    private final RabbitTemplate rabbitTemplate;
 
     @Override
     public Measurement recordMeasurement(Measurement measurement) {
-        // 1. Auto-set timestamp
         measurement.setTimestamp(LocalDateTime.now());
 
-        // 2. Link to Parameter ID based on the EnvType
-        // We try to find if a configuration exists for this type (e.g. TEMPERATURE)
-        Optional<Parameter> param = parameterRepository.findByType(measurement.getType());
+        Optional<Parameter> paramOpt = parameterRepository.findByType(measurement.getType());
 
-        // If found, we link it using the ID field as defined in your Entity
-        param.ifPresent(p -> measurement.setParameterId(p.getId()));
+        if (paramOpt.isPresent()) {
+            Parameter param = paramOpt.get();
+            measurement.setParameterId(param.getId());
 
-        // 3. Save
-        Measurement saved = measurementRepository.save(measurement);
+            // --- ALERTING LOGIC START ---
+            checkThresholdsAndAlert(measurement, param);
+            // --- ALERTING LOGIC END ---
+        }
 
-        // TODO: (Future Step) Check if value exceeds min/max thresholds and send RabbitMQ alert
+        return measurementRepository.save(measurement);
+    }
 
-        return saved;
+    private void checkThresholdsAndAlert(Measurement m, Parameter p) {
+        String alertMessage = null;
+
+        if (m.getValue() > p.getMaxThreshold()) {
+            alertMessage = String.format("ALERT: %s too high! Value: %.2f > Max: %.2f",
+                    m.getType(), m.getValue(), p.getMaxThreshold());
+        } else if (m.getValue() < p.getMinThreshold()) {
+            alertMessage = String.format("ALERT: %s too low! Value: %.2f < Min: %.2f",
+                    m.getType(), m.getValue(), p.getMinThreshold());
+        }
+
+        if (alertMessage != null) {
+            // Send message to RabbitMQ
+            // Routing key example: "alert.TEMPERATURE"
+            String routingKey = "alert." + m.getType().name();
+            rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, routingKey, alertMessage);
+
+            log.info(" [x] Sent RabbitMQ Message: {} '", alertMessage);
+        }
     }
 
     @Override
