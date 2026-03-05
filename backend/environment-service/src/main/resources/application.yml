@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: environment-service
+  config:
+    import: "optional:configserver:http://localhost:8888/"
+
+  # Database Connection
+  datasource:
+    url: jdbc:postgresql://localhost:5433/greenhouse_db
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update # Automatically create tables
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# RabbitMQ Connection
+spring.rabbitmq:
+  host: localhost
+  port: 5672
+  username: guest
+  password: guest
