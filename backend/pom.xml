@@ -15,7 +15,7 @@
         <module>discovery-service</module>
         <!--        <module>gateway-service</module>-->
         <module>environment-service</module>
-        <!--        <module>control-service</module>-->
+        <module>control-service</module>
         <!--        <module>alert-service</module>-->
     </modules>
 
