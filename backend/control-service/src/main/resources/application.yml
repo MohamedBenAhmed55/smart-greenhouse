@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: control-service
+  sql:
+    init:
+      mode: always
 
   # Database Connection
   datasource:
@@ -13,6 +16,7 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
     show-sql: true

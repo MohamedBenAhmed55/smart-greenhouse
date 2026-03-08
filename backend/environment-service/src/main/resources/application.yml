@@ -3,6 +3,9 @@ spring:
     name: environment-service
   config:
     import: "optional:configserver:http://localhost:8888/"
+  sql:
+    init:
+      mode: always
 
   # Database Connection
   datasource:
@@ -12,6 +15,7 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update # Automatically create tables
     show-sql: true
