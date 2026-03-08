@@ -1,5 +1,6 @@
 package com.polytech.greenhouse.controller;
 
+import com.polytech.greenhouse.dto.MeasurementDTO;
 import com.polytech.greenhouse.entity.Measurement;
 import com.polytech.greenhouse.entity.Parameter;
 import com.polytech.greenhouse.enums.EnvType;
@@ -22,8 +23,8 @@ public class EnvironmentController {
     // --- Measurement Endpoints ---
 
     @PostMapping("/measurements")
-    public ResponseEntity<Measurement> addMeasurement(@RequestBody Measurement measurement) {
-        return ResponseEntity.ok(measurementService.recordMeasurement(measurement));
+    public ResponseEntity<Measurement> addMeasurement(@RequestBody MeasurementDTO measurementDto) {
+        return ResponseEntity.ok(measurementService.recordMeasurement(measurementDto));
     }
 
     @GetMapping("/measurements")

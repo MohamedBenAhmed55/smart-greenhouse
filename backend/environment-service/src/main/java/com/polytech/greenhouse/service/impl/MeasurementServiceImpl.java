@@ -1,6 +1,7 @@
 package com.polytech.greenhouse.service.impl;
 
 import com.polytech.greenhouse.config.RabbitMQConfig;
+import com.polytech.greenhouse.dto.MeasurementDTO;
 import com.polytech.greenhouse.entity.Measurement;
 import com.polytech.greenhouse.entity.Parameter;
 import com.polytech.greenhouse.repository.MeasurementRepository;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,20 +25,23 @@ public class MeasurementServiceImpl implements MeasurementService {
     private final RabbitTemplate rabbitTemplate;
 
     @Override
-    public Measurement recordMeasurement(Measurement measurement) {
-        measurement.setTimestamp(LocalDateTime.now());
+    public Measurement recordMeasurement(MeasurementDTO dto) {
+        // 1. Validate that the sensor exists
+        Parameter param = parameterRepository.findById(dto.getSensorId())
+                .orElseThrow(() -> new RuntimeException("Sensor not found with ID: " + dto.getSensorId()));
 
-        Optional<Parameter> paramOpt = parameterRepository.findByType(measurement.getType());
+        // 2. Map DTO to Entity
+        Measurement measurement = Measurement.builder()
+                .type(dto.getType())
+                .value(dto.getValue())
+                .timestamp(LocalDateTime.now())
+                .parameterId(param.getId()) // Map sensorId -> parameterId
+                .build();
 
-        if (paramOpt.isPresent()) {
-            Parameter param = paramOpt.get();
-            measurement.setParameterId(param.getId());
+        // 3. Alerting Logic (Uses the 'param' object we fetched)
+        checkThresholdsAndAlert(measurement, param);
 
-            // --- ALERTING LOGIC START ---
-            checkThresholdsAndAlert(measurement, param);
-            // --- ALERTING LOGIC END ---
-        }
-
+        // 4. Save
         return measurementRepository.save(measurement);
     }
 
@@ -54,12 +57,10 @@ public class MeasurementServiceImpl implements MeasurementService {
         }
 
         if (alertMessage != null) {
-            // Send message to RabbitMQ
             // Routing key example: "alert.TEMPERATURE"
             String routingKey = "alert." + m.getType().name();
             rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, routingKey, alertMessage);
-
-            log.info(" [x] Sent RabbitMQ Message: {} '", alertMessage);
+            log.info(" [x] Sent RabbitMQ Message: '{}'", alertMessage);
         }
     }
 
