@@ -1,0 +1,29 @@
+server:
+  port: 8080 # The single entry point for the user/frontend
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true # Auto-detect services
+          lower-case-service-id: true
+      routes:
+        # Route 1: Environment Service
+        - id: environment-service
+          uri: lb://ENVIRONMENT-SERVICE # lb = Load Balancer (via Eureka)
+          predicates:
+            - Path=/api/v1/environment/**
+
+        # Route 2: Control Service
+        - id: control-service
+          uri: lb://CONTROL-SERVICE
+          predicates:
+            - Path=/api/v1/control/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
