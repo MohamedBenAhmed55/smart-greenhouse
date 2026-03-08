@@ -1,0 +1,47 @@
+<div class="alert-container">
+
+  <header class="page-header">
+    <h2>🔔 Live Alert Feed</h2>
+    <div class="status-indicator">
+      Status:
+      <span [class]="store.connectionStatus()">
+        {{ store.connectionStatus() }}
+      </span>
+    </div>
+  </header>
+
+  <div class="feed-wrapper">
+    <ul class="alert-list" *ngIf="store.alerts().length > 0; else emptyState">
+
+      <li
+        *ngFor="let alert of store.alerts()"
+        class="alert-card fade-in"
+        [class.unread]="!alert.read"
+        (click)="markAsRead(alert.id)"
+      >
+        <div class="alert-icon">⚠️</div>
+
+        <div class="alert-content">
+          <div class="alert-message">{{ alert.message }}</div>
+          <div class="alert-meta">
+            {{ alert.timestamp | date:'medium' }}
+          </div>
+        </div>
+
+        <div class="alert-action" *ngIf="!alert.read">
+          <span class="dot" title="Unread"></span>
+        </div>
+      </li>
+
+    </ul>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <div class="illustration">🛡️</div>
+        <h3>No Alerts Yet</h3>
+        <p>Your greenhouse is operating within safe parameters.</p>
+      </div>
+    </ng-template>
+  </div>
+
+</div>

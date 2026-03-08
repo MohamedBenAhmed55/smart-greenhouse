@@ -82,4 +82,23 @@ public class ControlServiceImpl implements ControlService {
                 .map(actionMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void sendCommand(String typeStr, String actionStr) {
+        try {
+            // 1. Convert String "FAN" -> Enum ActuatorType.FAN
+            ActuatorType type = ActuatorType.valueOf(typeStr);
+
+            // 2. Convert String "START"/"STOP" -> boolean true/false
+            boolean turnOn = "START".equalsIgnoreCase(actionStr);
+
+            // 3. Reuse your existing logic!
+            // We pass "Manual User Override" as the reason so it shows up in logs clearly.
+            executeAutomaticAction(type, turnOn, "Manual User Override");
+
+        } catch (IllegalArgumentException e) {
+            log.error("❌ Invalid manual command received: Type={}, Action={}", typeStr, actionStr);
+            throw new RuntimeException("Invalid equipment type or action provided.");
+        }
+    }
 }

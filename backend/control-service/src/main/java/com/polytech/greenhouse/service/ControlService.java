@@ -16,4 +16,6 @@ public interface ControlService {
 
     // View History (Returns DTOs)
     List<ActionDTO> getActionHistory();
+
+    void sendCommand(String type, String action);
 }

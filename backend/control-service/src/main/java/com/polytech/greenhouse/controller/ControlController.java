@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/control")
@@ -15,6 +16,17 @@ import java.util.List;
 public class ControlController {
 
     private final ControlService controlService;
+
+    @PostMapping("/equipments/action")
+    public ResponseEntity<Void> executeCommand(@RequestBody Map<String, String> payload) {
+        String type = payload.get("type");
+        String action = payload.get("action");
+
+        // Call your service logic to trigger MQTT/DB update
+        controlService.sendCommand(type, action);
+
+        return ResponseEntity.ok().build();
+    }
 
     // --- Equipment Management ---
 

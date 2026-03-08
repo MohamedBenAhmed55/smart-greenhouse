@@ -1,0 +1,71 @@
+/* Layout Grid */
+.app-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr; /* Sidebar | Content */
+  height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  background-color: #2c3e50;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.brand h1 {
+  font-size: 1.5rem;
+  margin-bottom: 40px;
+  color: #27ae60;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  color: #ecf0f1;
+  text-decoration: none;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  transition: background 0.3s;
+}
+
+.nav-item:hover {
+  background-color: #34495e;
+}
+
+.nav-item.active {
+  background-color: #27ae60;
+  font-weight: bold;
+}
+
+.icon { margin-right: 10px; }
+
+/* Alert Badge */
+.badge {
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  margin-left: auto;
+}
+
+/* Connection Status Footer */
+.connection-status {
+  margin-top: auto; /* Push to bottom */
+  font-size: 0.8rem;
+  color: #bdc3c7;
+}
+.CONNECTED { color: #2ecc71; font-weight: bold; }
+.DISCONNECTED { color: #e74c3c; font-weight: bold; }
+.ERROR { color: #f39c12; font-weight: bold; }
+
+/* Main Content */
+.content {
+  background-color: #f4f6f7;
+  padding: 30px;
+  overflow-y: auto;
+}

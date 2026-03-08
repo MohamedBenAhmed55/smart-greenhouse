@@ -1,0 +1,98 @@
+<div class="control-container">
+
+  <header class="page-header">
+    <div class="header-content">
+      <h2>🎛️ Equipment Control</h2>
+      <p class="subtitle">Manage and monitor actuators</p>
+    </div>
+    <button class="add-btn" (click)="showForm = !showForm">
+      {{ showForm ? 'Cancel' : '+ Add Equipment' }}
+    </button>
+  </header>
+
+  <div class="add-form-card" *ngIf="showForm">
+    <h3>New Equipment</h3>
+    <div class="form-row">
+      <input
+        type="text"
+        placeholder="Name (e.g., Roof Fan)"
+        [(ngModel)]="newEquipment.name"
+      >
+      <select [(ngModel)]="newEquipment.type">
+        <option value="FAN">Fan</option>
+        <option value="HEATER">Heater</option>
+        <option value="WATER_PUMP">Water Pump</option>
+        <option value="LIGHT_SYSTEM">Light System</option>
+        <option value="WINDOW_MOTOR">Window Motor</option>
+      </select>
+      <button (click)="createEquipment()" [disabled]="!newEquipment.name">
+        Save
+      </button>
+    </div>
+  </div>
+
+  <div class="equipment-grid">
+    <div
+      class="control-card"
+      *ngFor="let item of store.equipments()"
+      [class.active]="item.active"
+    >
+      <div class="icon-wrapper">
+        <span class="emoji">{{ getIcon(item.type) }}</span>
+      </div>
+
+      <div class="info">
+        <h3>{{ item.name }}</h3>
+        <span class="status-badge" [class.on]="item.active">
+          {{ item.active ? 'RUNNING' : 'STOPPED' }}
+        </span>
+      </div>
+
+      <div class="action">
+        <button
+          class="toggle-btn"
+          [class.stop]="item.active"
+          (click)="toggleActuator(item)"
+          [disabled]="loadingActionId === item.id"
+        >
+          <span *ngIf="loadingActionId !== item.id">
+            {{ item.active ? 'Stop' : 'Start' }}
+          </span>
+          <span *ngIf="loadingActionId === item.id" class="spinner">⌛</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <section class="history-section">
+    <h3>📜 Action Logs</h3>
+    <div class="table-container">
+      <table>
+        <thead>
+        <tr>
+          <th>Time</th>
+          <th>Type</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let log of store.actionHistory()">
+          <td>{{ log.timestamp | date:'medium' }}</td>
+          <td>
+            <span class="type-tag">{{ log.type }}</span>
+          </td>
+          <td>
+              <span class="action-tag" [class.start]="log.action === 'START'">
+                {{ log.action }}
+              </span>
+          </td>
+        </tr>
+        <tr *ngIf="store.actionHistory().length === 0">
+          <td colspan="3" class="text-center">No actions recorded yet.</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>

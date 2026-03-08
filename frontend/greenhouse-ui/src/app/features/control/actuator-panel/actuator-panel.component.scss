@@ -1,0 +1,216 @@
+.control-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 40px;
+  h2 { margin: 0; color: #2c3e50; }
+  .subtitle { color: #7f8c8d; margin-top: 5px; }
+}
+
+.equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.control-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+
+  /* Active State Styling */
+  &.active {
+    border-color: #27ae60;
+    background-color: #f0fdf4;
+
+    .icon-wrapper {
+      background-color: #dcfce7;
+      border: 2px solid #27ae60;
+    }
+  }
+
+  .icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    font-size: 1.8rem;
+    transition: background 0.3s;
+  }
+
+  .info {
+    flex-grow: 1;
+
+    h3 {
+      margin: 0 0 8px 0;
+      font-size: 1rem;
+      color: #334155;
+    }
+
+    .status-badge {
+      font-size: 0.7rem;
+      font-weight: bold;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background-color: #e2e8f0;
+      color: #64748b;
+
+      &.on {
+        background-color: #27ae60;
+        color: white;
+      }
+    }
+  }
+
+  .toggle-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #27ae60; /* Start Color */
+    color: white;
+    min-width: 80px;
+    transition: background 0.2s;
+
+    &:hover { background-color: #219150; }
+
+    &.stop {
+      background-color: #e74c3c; /* Stop Color */
+      &:hover { background-color: #c0392b; }
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: wait;
+    }
+  }
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: #7f8c8d;
+
+  button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+}
+
+/* Keep your existing .control-container, .page-header, .equipment-grid, .control-card styles */
+
+/* NEW: Header Layout */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+
+  .add-btn {
+    background: #34495e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    &:hover { background: #2c3e50; }
+  }
+}
+
+/* NEW: Add Form Styles */
+.add-form-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  animation: slideDown 0.3s ease-out;
+
+  h3 { margin-top: 0; color: #2c3e50; }
+
+  .form-row {
+    display: flex;
+    gap: 15px;
+
+    input, select {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      flex: 1;
+    }
+
+    button {
+      padding: 10px 25px;
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+
+      &:disabled { background: #bdc3c7; cursor: not-allowed; }
+    }
+  }
+}
+
+/* NEW: History Table Styles */
+.history-section {
+  margin-top: 50px;
+
+  h3 { color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; }
+}
+
+.table-container {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th { text-align: left; padding: 15px; background: #f8f9fa; color: #7f8c8d; }
+  td { padding: 15px; border-bottom: 1px solid #ecf0f1; color: #34495e; }
+
+  .text-center { text-align: center; color: #95a5a6; font-style: italic; }
+}
+
+.type-tag {
+  background: #ecf0f1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.action-tag {
+  font-weight: bold;
+  color: #c0392b; /* STOP color */
+
+  &.start { color: #27ae60; } /* START color */
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

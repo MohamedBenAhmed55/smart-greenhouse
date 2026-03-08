@@ -1,0 +1,92 @@
+<div class="dashboard-container">
+
+  <header class="page-header">
+    <h2>📊 Environment Monitor</h2>
+    <button class="refresh-btn" (click)="loadData()" [disabled]="store.isLoading()">
+      {{ store.isLoading() ? 'Refreshing...' : 'Refresh Now' }}
+    </button>
+  </header>
+
+  <section class="simulation-section">
+    <div class="sim-card">
+      <div class="sim-header">
+        <h3>🧪 Sensor Simulator</h3>
+        <p>Test alerts by injecting manual readings</p>
+      </div>
+      <div class="sim-controls">
+        <select [(ngModel)]="simType">
+          <option value="TEMPERATURE">Temperature</option>
+          <option value="HUMIDITY">Humidity</option>
+          <option value="LUMINOSITY">Luminosity</option>
+          <option value="SOIL_MOISTURE">Soil Moisture</option>
+        </select>
+
+        <input type="number" [(ngModel)]="simValue" placeholder="Val">
+
+        <button (click)="onSimulate()" [disabled]="isSimulating">
+          {{ isSimulating ? 'Sending...' : 'Send Data' }}
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <div class="cards-grid">
+    <div class="sensor-card temp" [class.hot]="(store.latestTemp()?.value || 0) > 28">
+      <div class="card-icon">🌡️</div>
+      <div class="card-info">
+        <h3>Temperature</h3>
+        <span class="value">{{ store.latestTemp()?.value | unitFormat:'TEMPERATURE' }}</span>
+        <span class="timestamp">{{ store.latestTemp()?.timestamp | date:'shortTime' }}</span>
+      </div>
+    </div>
+
+    <div class="sensor-card humidity">
+      <div class="card-icon">💧</div>
+      <div class="card-info">
+        <h3>Humidity</h3>
+        <span class="value">{{ store.latestHumidity()?.value | unitFormat:'HUMIDITY' }}</span>
+        <span class="timestamp">{{ store.latestHumidity()?.timestamp | date:'shortTime' }}</span>
+      </div>
+    </div>
+
+    <div class="sensor-card light">
+      <div class="card-icon">☀️</div>
+      <div class="card-info">
+        <h3>Light</h3>
+        <span class="value">{{ getLatestValue('LUMINOSITY')?.value | unitFormat:'LUMINOSITY' }}</span>
+        <span class="timestamp">{{ getLatestValue('LUMINOSITY')?.timestamp | date:'shortTime' }}</span>
+      </div>
+    </div>
+
+    <div class="sensor-card soil">
+      <div class="card-icon">🌱</div>
+      <div class="card-info">
+        <h3>Soil Moisture</h3>
+        <span class="value">{{ getLatestValue('SOIL_MOISTURE')?.value | unitFormat:'SOIL_MOISTURE' }}</span>
+        <span class="timestamp">{{ getLatestValue('SOIL_MOISTURE')?.timestamp | date:'shortTime' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <section class="history-section">
+    <h3>Recent Readings</h3>
+    <div class="table-responsive">
+      <table>
+        <thead>
+        <tr>
+          <th>Time</th>
+          <th>Sensor Type</th>
+          <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let m of store.measurements().slice(0, 10)">
+          <td>{{ m.timestamp | date:'medium' }}</td>
+          <td><span class="badge" [class]="m.type">{{ m.type }}</span></td>
+          <td><strong>{{ m.value | unitFormat:m.type }}</strong></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
